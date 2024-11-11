@@ -1,0 +1,42 @@
+<!-- ticket_app/templates/ticket_app/update_ticket_status.html
+<h2>Update Status for Ticket: {{ ticket.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Status</button>
+</form> -->
+
+<h2>{{ ticket.title }}</h2>
+<p>{{ ticket.description }}</p>
+<p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+<p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+
+<!-- Assigned Users -->
+<h3>Assigned Users:</h3>
+<ul>
+    {% for user in ticket.assigned_users %}
+        <li>{{ user }}</li>
+    {% empty %}
+        <li>No users assigned</li>
+    {% endfor %}
+</ul>
+
+<!-- Comment Form -->
+<h3>Add a Comment:</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit" name="submit_comment">Add Comment</button>
+</form>
+
+<!-- Ticket Status Form -->
+<h3>Update Ticket Status:</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ status_form.as_p }}
+    <button type="submit" name="status">Update Status</button>
+</form>
+
+<!-- Links or Buttons for Actions -->
+<a href="{% url 'ticket_detail' ticket.id %}">Back to Ticket</a>

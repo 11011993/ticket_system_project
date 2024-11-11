@@ -1,0 +1,15 @@
+<!-- ticket_app/templates/ticket_app/ticket_detail.html -->
+<h2>{{ ticket.title }}</h2>
+<p>{{ ticket.description }}</p>
+
+<h3>Activity History</h3>
+<ul>
+    {% for activity in ticket.activities.all %}
+        <li>
+            <strong>{{ activity.timestamp }}</strong> - {{ activity.user.username }}:
+            {{ activity.activity_type }} - {{ activity.comment }}
+        </li>
+    {% empty %}
+        <p>No activities recorded for this ticket.</p>
+    {% endfor %}
+</ul>

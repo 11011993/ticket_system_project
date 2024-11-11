@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Detail</title>
+</head>
+<body>
+    <h2>{{ ticket.title }}</h2>
+    <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+    <p><strong>Description:</strong> {{ ticket.description }}</p>
+    <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+    <p><strong>Creator:</strong> {{ ticket.creator.email }}</p>
+    <p><strong>Created At:</strong> {{ ticket.created_at }}</p>
+
+    <h3>Assigned Users:</h3>
+    <ul>
+        {% for assignment in assigned_users %}
+            <li>{{ assignment.user.email }}</li>
+        {% empty %}
+            <li>No users assigned.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Link to update status if user is creator or assigned user -->
+    {% if user == ticket.creator or user.id in assigned_user_ids %}
+        <a href="{% url 'update_ticket' ticket.id %}">Update Status</a>
+    {% endif %}
+
+    <h3>Activity History</h3>
+    <ul>
+        {% for activity in activities %}
+            <li>
+                <strong>{{ activity.timestamp }}</strong> - {{ activity.user.email }}:
+                {{ activity.activity_type }}{% if activity.comment %} - {{ activity.comment }}{% endif %}
+                {% if activity.status %}
+                    - Status: {{ activity.status }}
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No activities recorded for this ticket.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Optionally, add forms or links to add comments or other activities -->
+</body>
+</html>
