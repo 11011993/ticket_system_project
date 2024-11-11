@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views import View
@@ -184,3 +184,10 @@ def register_user(request):
     else:
         form = UserRegistrationForm()
     return render(request, "ticket_app/register.html", {"form": form})
+
+class LogoutView(View):
+    def get(self, request):
+        # Log out the user
+        logout(request)
+        # Redirect to login page or home page
+        return redirect("login")
