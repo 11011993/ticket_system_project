@@ -16,7 +16,6 @@ class LoginView(View):
 
     def get(self, request):
         form = EmailAuthenticationForm()
-        logging.warning("Comment form is invalid2222222222: %s", form.errors)
         return render(request, self.template_name, {"form": form})
 
     def post(self, request):
@@ -24,7 +23,6 @@ class LoginView(View):
         logging.warning("Comment form is invalid1111: %s", form.errors)
         if form.is_valid():
             login(request, form.get_user())
-            print("&&&&&&&&&&&&&&&&&&&&7")
             return redirect("ticket_list")
         else:
             logging.warning("Login form is invalid: %s", form.errors)
@@ -56,11 +54,7 @@ def create_ticket(request):
 
 @login_required
 def ticket_list(request):
-    # tickets = Ticket.objects.all()
     user = request.user
-    # tickets = Ticket.objects.filter(
-    #     Q(creator=user) | Q(assignments__user=user)
-    # ).distinct()
     tickets = Ticket.objects.prefetch_related(
     Prefetch('assignments', queryset=TicketAssignment.objects.select_related('user')),
     Prefetch('activities', queryset=Activity.objects.filter(activity_type="comment").order_by('-timestamp'))
@@ -100,7 +94,6 @@ def send_activity_notifications(ticket, activity):
 @login_required
 def update_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    
     # Check if the user is the creator or an assigned user
     is_creator = request.user == ticket.creator
     is_assigned = TicketAssignment.objects.filter(ticket=ticket, user=request.user).exists()
@@ -132,12 +125,14 @@ def update_ticket(request, ticket_id):
                 return redirect("ticket_detail", ticket_id=ticket.id)
             else:
                 logging.warning("Comment form is invalid: %s", form.errors)
-        elif "status" in request.POST:
+        elif "submit_status" in request.POST:
             # Handle ticket status form submission
-            form = TicketStatusForm(request.POST, instance=ticket)
-            if form.is_valid():
+            logging.info("Status update form submitted")
+            status_form = TicketStatusForm(request.POST, instance=ticket)
+            if status_form.is_valid():
                 previous_status = ticket.status
-                form.save()
+                status_form.save()
+                logging.info("Status updated from %s to %s", previous_status, ticket.status)
 
                 # Log the activity only if the status has changed
                 if previous_status != ticket.status:

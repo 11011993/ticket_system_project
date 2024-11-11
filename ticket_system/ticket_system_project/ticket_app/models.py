@@ -67,11 +67,6 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_status_display()})"
-    
-    # @property
-    # def assigned_users(self):
-    #     """Returns a queryset of users assigned to this ticket."""
-    #     return self.ticket_assignments.select_related('user').all().values_list('user', flat=True)
 
     @property
     def assigned_users(self):

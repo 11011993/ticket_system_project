@@ -1,12 +1,3 @@
-<!-- ticket_app/templates/ticket_app/update_ticket_status.html
-<h2>Update Status for Ticket: {{ ticket.title }}</h2>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Status</button>
-</form> -->
-
 <h2>{{ ticket.title }}</h2>
 <p>{{ ticket.description }}</p>
 <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
@@ -35,7 +26,7 @@
 <form method="POST">
     {% csrf_token %}
     {{ status_form.as_p }}
-    <button type="submit" name="status">Update Status</button>
+    <button type="submit" name="submit_status">Update Status</button>
 </form>
 
 <!-- Links or Buttons for Actions -->
