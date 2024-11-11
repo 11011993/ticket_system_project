@@ -1,35 +1,166 @@
-<h2>{{ ticket.title }}</h2>
-<p>{{ ticket.description }}</p>
-<p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
-<p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
 
-<!-- Assigned Users -->
-<h3>Assigned Users:</h3>
-<ul>
-    {% for user in ticket.assigned_users %}
-        <li>{{ user }}</li>
-    {% empty %}
-        <li>No users assigned</li>
-    {% endfor %}
-</ul>
+        h2 {
+            color: #007bff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
 
-<!-- Comment Form -->
-<h3>Add a Comment:</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-    <button type="submit" name="submit_comment">Add Comment</button>
-</form>
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-<!-- Ticket Status Form -->
-<h3>Update Ticket Status:</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{ status_form.as_p }}
-    <button type="submit" name="submit_status">Update Status</button>
-</form>
+        strong {
+            color: #555;
+        }
 
-<!-- Links or Buttons for Actions -->
-<a href="{% url 'ticket_detail' ticket.id %}">Back to Ticket</a>
-<br><br>
-<a href="{% url 'logout' %}" class="logout">Logout</a>
+        .section {
+            width: 80%;
+            max-width: 700px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            font-size: 20px;
+            margin-top: 0;
+        }
+
+        .assigned-users, .comment-form, .status-form {
+            margin-top: 15px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .links {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .links a {
+            padding: 8px 12px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            background-color: #5a6268;
+        }
+
+        .logout {
+            background-color: #dc3545;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ticket Details -->
+    <div class="section">
+        <h2>{{ ticket.title }}</h2>
+        <p>{{ ticket.description }}</p>
+        <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+        <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+    </div>
+
+    <!-- Assigned Users -->
+    <div class="section assigned-users">
+        <h3>Assigned Users:</h3>
+        <ul>
+            {% for user in ticket.assigned_users %}
+                <li>{{ user }}</li>
+            {% empty %}
+                <li>No users assigned</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Comment Form -->
+    <div class="section comment-form">
+        <h3>Add a Comment:</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" name="submit_comment">Add Comment</button>
+        </form>
+    </div>
+
+    <!-- Ticket Status Form -->
+    <div class="section status-form">
+        <h3>Update Ticket Status:</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ status_form.as_p }}
+            <button type="submit" name="submit_status">Update Status</button>
+        </form>
+    </div>
+
+    <!-- Links for Navigation -->
+    <div class="links">
+        <a href="{% url 'ticket_detail' ticket.id %}">Back to Ticket</a>
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
+
+</body>
+</html>
+

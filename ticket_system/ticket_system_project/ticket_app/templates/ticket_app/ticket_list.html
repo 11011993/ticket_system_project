@@ -1,48 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Ticket List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .create-ticket-btn, .update-btn, .logout {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout {
+            background-color: #dc3545;
+        }
+
+        .create-ticket-btn:hover, .update-btn:hover, .logout:hover {
+            background-color: #0056b3;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+
+        .ticket-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .ticket-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            width: 100%;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .ticket-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .ticket-card h3 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .ticket-details {
+            color: #555;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .assigned-users, .comments {
+            margin-top: 10px;
+        }
+
+        .assigned-users em, .comments strong {
+            color: #555;
+            font-weight: bold;
+        }
+
+        .comments ul {
+            list-style-type: disc;
+            margin: 5px 0 0 20px;
+        }
+
+        .comments ul li {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+
     <h2>Tickets</h2>
+    
+    <a href="{% url 'create_ticket' %}" class="create-ticket-btn">Create New Ticket</a>
 
-    <a href="{% url 'create_ticket' %}" class="create-ticket-btn" style="padding: 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">
-        Create New Ticket
-    </a>
-
-
-    <ul>
+    <div class="ticket-container">
         {% for ticket in tickets %}
-            <li>
-                <strong>{{ ticket.title }}</strong> - Priority: {{ ticket.priority }} <br>
-                <em>Assigned to:</em> 
-                {% for assignment in ticket.assignments.all %}
-                    {{ assignment.user.email }},
-                {% empty %}
-                    No users assigned
-                {% endfor %}
-                <br>
+            <div class="ticket-card">
+                <h3>{{ ticket.title }}</h3>
+                <div class="ticket-details">
+                    <strong>Priority:</strong> {{ ticket.get_priority_display }}<br>
+                    <strong>Status:</strong> {{ ticket.get_status_display }}
+                </div>
 
-                <!-- Comments for the Ticket -->
-                <strong>Comments:</strong>
-                <ul>
-                    {% for activity in ticket.activities.all %}
-                        <li>
-                            {{ activity.comment }} <br>
-                            <em>At:</em> {{ activity.timestamp }}
-                        </li>
+                <div class="assigned-users">
+                    <em>Assigned to:</em>
+                    {% for assignment in ticket.assignments.all %}
+                        {{ assignment.user.email }}{% if not forloop.last %}, {% endif %}
                     {% empty %}
-                        <li>No comments yet.</li>
+                        No users assigned
                     {% endfor %}
-                </ul>
-                <br>
-                <!-- Update Button (using a form or link depending on your preference) -->
-                <a href="{% url 'update_ticket' ticket.id %}" class="update-btn">Update Ticket</a>
-            </li>
+                </div>
+
+                <div class="comments">
+                    <strong>Comments:</strong>
+                    <ul>
+                        {% for activity in ticket.activities.all %}
+                            <li>
+                                {{ activity.comment }} <br>
+                                <em>At:</em> {{ activity.timestamp }}
+                            </li>
+                        {% empty %}
+                            <li>No comments yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="btn-container">
+                    <a href="{% url 'update_ticket' ticket.id %}" class="update-btn">Update Ticket</a>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+
     <a href="{% url 'logout' %}" class="logout">Logout</a>
+
 </body>
 </html>
+

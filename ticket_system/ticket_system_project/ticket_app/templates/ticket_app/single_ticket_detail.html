@@ -3,47 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <title>Ticket Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 24px;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        strong {
+            color: #333;
+        }
+
+        h3 {
+            color: #007bff;
+            font-size: 20px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .action-link, .logout {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 10px 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-link:hover, .logout:hover {
+            background-color: #0056b3;
+        }
+
+        .logout {
+            background-color: #dc3545;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+
+        .assigned-users, .activity-history {
+            margin-bottom: 20px;
+        }
+
+        .no-activity, .no-assigned {
+            font-style: italic;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h2>{{ ticket.title }}</h2>
-    <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
-    <p><strong>Description:</strong> {{ ticket.description }}</p>
-    <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
-    <p><strong>Creator:</strong> {{ ticket.creator.email }}</p>
-    <p><strong>Created At:</strong> {{ ticket.created_at }}</p>
+    <div class="container">
+        <!-- Ticket Details -->
+        <h2>{{ ticket.title }}</h2>
+        <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+        <p><strong>Description:</strong> {{ ticket.description }}</p>
+        <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+        <p><strong>Creator:</strong> {{ ticket.creator.email }}</p>
+        <p><strong>Created At:</strong> {{ ticket.created_at }}</p>
 
-    <h3>Assigned Users:</h3>
-    <ul>
-        {% for assignment in assigned_users %}
-            <li>{{ assignment.user.email }}</li>
-        {% empty %}
-            <li>No users assigned.</li>
-        {% endfor %}
-    </ul>
+        <!-- Assigned Users -->
+        <div class="assigned-users">
+            <h3>Assigned Users:</h3>
+            <ul>
+                {% for assignment in assigned_users %}
+                    <li>{{ assignment.user.email }}</li>
+                {% empty %}
+                    <li class="no-assigned">No users assigned.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <!-- Link to update status if user is creator or assigned user -->
-    {% if user == ticket.creator or user.id in assigned_user_ids %}
-        <a href="{% url 'update_ticket' ticket.id %}">Update Status</a>
-    {% endif %}
+        <!-- Update Status Link if Applicable -->
+        {% if user == ticket.creator or user.id in assigned_user_ids %}
+            <a href="{% url 'update_ticket' ticket.id %}" class="action-link">Update Status</a>
+        {% endif %}
 
-    <h3>Activity History</h3>
-    <ul>
-        {% for activity in activities %}
-            <li>
-                <strong>{{ activity.timestamp }}</strong> - {{ activity.user.email }}:
-                {{ activity.activity_type }}{% if activity.comment %} - {{ activity.comment }}{% endif %}
-                {% if activity.status %}
-                    - Status: {{ activity.status }}
-                {% endif %}
-            </li>
-        {% empty %}
-            <li>No activities recorded for this ticket.</li>
-        {% endfor %}
-    </ul>
+        <!-- Activity History -->
+        <div class="activity-history">
+            <h3>Activity History</h3>
+            <ul>
+                {% for activity in activities %}
+                    <li>
+                        <strong>{{ activity.timestamp }}</strong> - {{ activity.user.email }}:
+                        {{ activity.activity_type }}
+                        {% if activity.comment %} - {{ activity.comment }}{% endif %}
+                        {% if activity.status %}
+                            - Status: {{ activity.status }}
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="no-activity">No activities recorded for this ticket.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <!-- Optionally, add forms or links to add comments or other activities -->
-
-    <br><br>
-<a href="{% url 'logout' %}" class="logout">Logout</a>
+        <!-- Logout Link -->
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
 </body>
 </html>
+
